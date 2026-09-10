@@ -1,0 +1,690 @@
+<!doctype html>
+<!-- Template originally by Laurent Begey, distributed by ThemeWagon. Extensively customized. -->
+<html lang="en" x-data="app()" :class="{'dark':dark}" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:type" content="website" />
+  <title>LVCampusConnect — Case Study | C.E.</title>
+  <meta name="description" content="Case study: LVCampusConnect — A comprehensive queue management and campus information system built with the MERN stack." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+    rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ["PT Sans", "sans-serif"],
+            body: ["DM Sans", "sans-serif"],
+          },
+          colors: { accent: "#3B82F6", "accent-light": "#60A5FA" },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      font-family: "DM Sans", sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: "PT Sans", sans-serif;
+    }
+
+    body {
+      transition:
+        background-color 0.3s,
+        color 0.3s;
+    }
+
+    /* noise overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #3b82f6;
+      border-radius: 99px;
+    }
+
+    /* reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition:
+        opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .d1 {
+      transition-delay: 0.08s;
+    }
+
+    .d2 {
+      transition-delay: 0.16s;
+    }
+
+    .d3 {
+      transition-delay: 0.24s;
+    }
+
+    .d4 {
+      transition-delay: 0.32s;
+    }
+
+    /* nav underline animation */
+    .nl {
+      position: relative;
+    }
+
+    .nl::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: currentColor;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nl:hover::after,
+    .nl.on::after {
+      width: 100%;
+    }
+
+    .nl.on {
+      font-weight: 500;
+    }
+
+    /* shimmer button */
+    .shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shimmer::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.18);
+      transform: skewX(-20deg);
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .shimmer:hover::after {
+      left: 160%;
+    }
+
+    /* photo frames */
+    .pf {
+      overflow: hidden;
+      background: #d4d4d8;
+    }
+
+    .pf img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* card hover */
+    .card-h {
+      transition:
+        transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.18s;
+    }
+
+    .card-h:hover {
+      transform: translateY(-4px);
+    }
+
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased">
+  <!-- ═══ NAV ═══ -->
+  <header class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+    :class="sc?'bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-sm shadow-black/5':''">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between" aria-label="Main navigation">
+      <a href="index.html" class="font-display font-bold text-xl tracking-tight relative z-10">
+        <span class="text-zinc-900 dark:text-white">chris</span><span class="text-accent">tian</span>
+      </a>
+
+      <div class="flex items-center gap-3">
+        <!-- back to portfolio -->
+        <a href="index.html#work"
+          class="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors nl">
+          <svg class="w-3.5 h-3.5 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+          Back to portfolio
+        </a>
+        <!-- dark toggle -->
+        <button @click="dark=!dark"
+          class="w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+          :aria-label="dark?'Light mode':'Dark mode'">
+          <svg x-show="!dark" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+          <svg x-show="dark" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="relative z-10 pt-16">
+    <!-- ═══ HERO ═══ -->
+    <section class="pt-16 pb-12">
+      <div class="max-w-4xl mx-auto px-6">
+        <!-- Breadcrumb -->
+        <nav class="reveal flex items-center gap-2 text-sm text-zinc-400 mb-8" aria-label="Breadcrumb">
+          <a href="index.html" class="hover:text-accent transition-colors">Home</a>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <a href="index.html#work" class="hover:text-accent transition-colors">Work</a>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <span class="text-zinc-600 dark:text-zinc-300">LVCampusConnect</span>
+        </nav>
+
+        <!-- Title -->
+        <h1
+          class="reveal d1 font-display font-bold text-4xl md:text-5xl lg:text-6xl text-zinc-900 dark:text-white leading-tight mb-6">
+          LVCampusConnect System
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="reveal d2 text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-2xl mb-10">
+          A comprehensive queue management and campus information system designed to streamline campus services at La Verdad Christian College.
+        </p>
+
+        <!-- Meta row -->
+        <div
+          class="reveal d3 grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-t border-b border-zinc-200 dark:border-zinc-800">
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Role
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              Full Stack Developer
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Type
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              Capstone Project
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Stack
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              MERN + Socket.io
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Status
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              Completed
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ HERO IMAGE ═══ -->
+    <section class="pb-16" x-data="{ showVideoModal: false }">
+      <div class="max-w-5xl mx-auto px-6 relative">
+        <div class="reveal pf rounded-2xl w-full aspect-video relative group cursor-pointer overflow-hidden bg-black" @click="showVideoModal = true; $nextTick(() => { $refs.modalVideo.play() })">
+          <!-- Inline Looping Video -->
+          <video src="assets/lvcampusconnect/main.mp4" autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></video>
+          
+          <!-- Hover Overlay -->
+          <div class="absolute inset-0 bg-black/20 dark:bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+            <div class="w-16 h-16 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-all duration-300">
+              <svg class="w-8 h-8 text-white translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Modal Overlay -->
+        <template x-teleport="body">
+          <div x-show="showVideoModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" x-transition.opacity.duration.300ms>
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer" @click="showVideoModal = false; $refs.modalVideo.pause()"></div>
+            
+            <!-- Modal Content -->
+            <div class="relative w-full max-w-6xl aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black" x-transition.scale.80.duration.300ms>
+              <!-- Close Button -->
+              <button @click="showVideoModal = false; $refs.modalVideo.pause()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors focus:outline-none">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              
+              <!-- Controllable Video -->
+              <video x-ref="modalVideo" src="assets/lvcampusconnect/main.mp4" controls playsinline class="w-full h-full object-contain outline-none"></video>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <section class="py-16">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Overview
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              The Challenge
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-6">
+              Campus services at La Verdad Christian College relied on manual, paper-based queue management systems that created long wait times, disorganized workflows, and a frustrating experience for both students and staff. Additionally, visitors, new teachers, and new students frequently struggled with directions, as they were unfamiliar with the campus layout. There was no centralized platform for managing queues or providing guided campus information.
+            </p>
+            <p class="reveal d3 text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              The challenge was to design and build a system that could handle real-time queue operations, provide a user-friendly public kiosk for wayfinding and information, and give administrators full control through a secure dashboard — all while being scalable enough to serve the entire campus.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SOLUTION ═══ -->
+    <section class="py-16 bg-zinc-50 dark:bg-zinc-900/40">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Approach
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              The Solution
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-8">
+              LVCampusConnect was built as a dual-interface system: a touch-friendly public kiosk optimized for 16:9 displays, and a secure administrative dashboard with Role-Based Access Control tailored for specific campus offices.
+            </p>
+
+            <!-- Feature cards -->
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div
+                class="reveal d1 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Real-Time Operations
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  WebSockets via Socket.io for live queue updates, window availability, and instant system-wide notifications across all devices.
+                </p>
+              </div>
+
+              <div
+                class="reveal d2 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Secure Access Control
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Google SSO authentication with JWT and strict RBAC, ensuring each office (MIS, Registrar, Admissions) has tailored permissions.
+                </p>
+              </div>
+
+              <div
+                class="reveal d3 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Smart Queueing
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Priority queueing for PWD and Senior Citizens, department-specific services, and thermal receipt printing for queue tickets.
+                </p>
+              </div>
+
+              <div
+                class="reveal d4 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Analytics & Auditing
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Comprehensive analytics with dual-wave area charts, aggregated data, and detailed transaction logs for monitoring office performance.
+                </p>
+              </div>
+              
+              <div
+                class="reveal d5 sm:col-span-2 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  3D Interactive Wayfinding
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  To solve campus navigation for newcomers, we built basic 3D floor models using Blender and created animated arrow-guide videos with Canva. These intuitive visual guides are integrated directly into the public kiosk.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TECH STACK ═══ -->
+    <section class="py-16">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Technology
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              Tech Stack
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <div class="reveal d2 flex flex-wrap gap-3">
+              <span
+                class="text-sm bg-blue-50 dark:bg-zinc-800 text-accent border border-blue-200 dark:border-zinc-700 px-4 py-2 rounded-full font-medium">React.js</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Tailwind
+                CSS</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Node.js</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Express.js</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">MongoDB</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Socket.io</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Google
+                OAuth 2.0</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">JWT</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Cloudflare Pages</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Render</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Framer Motion</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">shadcn/ui</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Blender</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Canva</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ GALLERY / VISUALS ═══ -->
+    <section class="py-16 bg-zinc-50 dark:bg-zinc-900/40">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+            Gallery
+          </p>
+          <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+            Preview
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="reveal d1 pf rounded-2xl aspect-video">
+            <img src="assets/lvcampusconnect/1.png"
+              alt="Public Kiosk Interface" loading="lazy" />
+          </div>
+          <div class="reveal d2 pf rounded-2xl aspect-video">
+            <img src="assets/lvcampusconnect/2.png"
+              alt="Admin Dashboard" loading="lazy" />
+          </div>
+          <div class="reveal d3 pf rounded-2xl aspect-video">
+            <img src="assets/lvcampusconnect/3.png"
+              alt="Queue Management View" loading="lazy" />
+          </div>
+          <div class="reveal d4 pf rounded-2xl aspect-video">
+            <img src="assets/lvcampusconnect/4.png"
+              alt="Analytics Dashboard" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ OUTCOME ═══ -->
+    <section class="py-16">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Results
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              The Outcome
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-8">
+              LVCampusConnect was successfully developed to modernize campus services, improving service efficiency and reducing wait times. The system provides centralized access to campus information through a scalable and maintainable architecture, serving as a strong foundation for future digital transformation initiatives at the campus.
+            </p>
+
+            <!-- Outcome highlights -->
+            <div class="reveal d3 grid grid-cols-3 gap-6">
+              <div class="text-center">
+                <p class="font-display font-bold text-3xl text-accent mb-1">2</p>
+                <p class="text-xs text-zinc-400">Interfaces Built</p>
+              </div>
+              <div class="text-center">
+                <p class="font-display font-bold text-3xl text-accent mb-1">4+</p>
+                <p class="text-xs text-zinc-400">Departments Served</p>
+              </div>
+              <div class="text-center">
+                <p class="font-display font-bold text-3xl text-accent mb-1">Live</p>
+                <p class="text-xs text-zinc-400">WebSocket Updates</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ NEXT PROJECT ═══ -->
+    <section class="py-16 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="reveal flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-2">Next project</p>
+            <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              KDR Titans Mobile App
+            </h3>
+          </div>
+          <a href="kdr-case-study.html"
+            class="shimmer inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium px-7 py-3.5 rounded-full hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors text-sm">
+            View project
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-zinc-100 dark:border-zinc-900">
+    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-zinc-400">
+        © <span id="yr"></span> Christian Eliseo Navales Isip. All rights reserved.
+      </p>
+      <p class="text-xs text-zinc-500">
+        Built with
+        <a href="https://tailwindcss.com" rel="noopener noreferrer" target="_blank"
+          class="hover:text-accent transition-colors">Tailwind CSS</a>
+        &amp;
+        <a href="https://alpinejs.dev" rel="noopener noreferrer" target="_blank"
+          class="hover:text-accent transition-colors">Alpine.js</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function app() {
+      return {
+        dark: false,
+        sc: false,
+
+        init() {
+          // dark mode
+          this.dark =
+            localStorage.getItem("theme") === "dark" ||
+            (!localStorage.getItem("theme") &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          this.$watch("dark", (v) =>
+            localStorage.setItem("theme", v ? "dark" : "light"),
+          );
+
+          // scroll
+          window.addEventListener(
+            "scroll",
+            () => {
+              this.sc = window.scrollY > 20;
+            },
+            { passive: true },
+          );
+
+          // reveal
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  e.target.classList.add("in");
+                  io.unobserve(e.target);
+                }
+              });
+            },
+            { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
+          );
+          document
+            .querySelectorAll(".reveal")
+            .forEach((el) => io.observe(el));
+
+          // year
+          document.getElementById("yr").textContent =
+            new Date().getFullYear();
+        },
+      };
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,649 @@
+<!doctype html>
+<!-- Template originally by Laurent Begey, distributed by ThemeWagon. Extensively customized. -->
+<html lang="en" x-data="app()" :class="{'dark':dark}" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:type" content="website" />
+  <title>LVCampusConnect — Case Study | C.E.</title>
+  <meta name="description" content="Case study: LVCampusConnect — A comprehensive queue management and campus information system built with the MERN stack." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+    rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ["PT Sans", "sans-serif"],
+            body: ["DM Sans", "sans-serif"],
+          },
+          colors: { accent: "#3B82F6", "accent-light": "#60A5FA" },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      font-family: "DM Sans", sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: "PT Sans", sans-serif;
+    }
+
+    body {
+      transition:
+        background-color 0.3s,
+        color 0.3s;
+    }
+
+    /* noise overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #3b82f6;
+      border-radius: 99px;
+    }
+
+    /* reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition:
+        opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .d1 {
+      transition-delay: 0.08s;
+    }
+
+    .d2 {
+      transition-delay: 0.16s;
+    }
+
+    .d3 {
+      transition-delay: 0.24s;
+    }
+
+    .d4 {
+      transition-delay: 0.32s;
+    }
+
+    /* nav underline animation */
+    .nl {
+      position: relative;
+    }
+
+    .nl::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: currentColor;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nl:hover::after,
+    .nl.on::after {
+      width: 100%;
+    }
+
+    .nl.on {
+      font-weight: 500;
+    }
+
+    /* shimmer button */
+    .shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shimmer::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.18);
+      transform: skewX(-20deg);
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .shimmer:hover::after {
+      left: 160%;
+    }
+
+    /* photo frames */
+    .pf {
+      overflow: hidden;
+      background: #d4d4d8;
+    }
+
+    .pf img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* card hover */
+    .card-h {
+      transition:
+        transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.18s;
+    }
+
+    .card-h:hover {
+      transform: translateY(-4px);
+    }
+
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased">
+  <!-- ═══ NAV ═══ -->
+  <header class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+    :class="sc?'bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-sm shadow-black/5':''">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between" aria-label="Main navigation">
+      <a href="index.html" class="font-display font-bold text-xl tracking-tight relative z-10">
+        <span class="text-zinc-900 dark:text-white">chris</span><span class="text-accent">tian</span>
+      </a>
+
+      <div class="flex items-center gap-3">
+        <!-- back to portfolio -->
+        <a href="index.html#work"
+          class="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors nl">
+          <svg class="w-3.5 h-3.5 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+          Back to portfolio
+        </a>
+        <!-- dark toggle -->
+        <button @click="dark=!dark"
+          class="w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+          :aria-label="dark?'Light mode':'Dark mode'">
+          <svg x-show="!dark" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+          <svg x-show="dark" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="relative z-10 pt-16">
+    <!-- ═══ HERO ═══ -->
+    <section class="pt-16 pb-12">
+      <div class="max-w-4xl mx-auto px-6">
+        <!-- Breadcrumb -->
+        <nav class="reveal flex items-center gap-2 text-sm text-zinc-400 mb-8" aria-label="Breadcrumb">
+          <a href="index.html" class="hover:text-accent transition-colors">Home</a>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <a href="index.html#work" class="hover:text-accent transition-colors">Work</a>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <span class="text-zinc-600 dark:text-zinc-300">KDR Titans Mobile App</span>
+        </nav>
+
+        <!-- Title -->
+        <h1
+          class="reveal d1 font-display font-bold text-4xl md:text-5xl lg:text-6xl text-zinc-900 dark:text-white leading-tight mb-6">
+          KDR Titans Mobile App
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="reveal d2 text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-2xl mb-10">
+          A high-fidelity mobile application prototype designed in Figma to modernize the registration process for the KDR Titans obstacle course event.
+        </p>
+
+        <!-- Meta row -->
+        <div
+          class="reveal d3 grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-t border-b border-zinc-200 dark:border-zinc-800">
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Role
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              UI/UX Designer
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Type
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              Mobile App Prototype
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Stack
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              Figma
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-1.5">
+              Status
+            </p>
+            <p class="font-medium text-zinc-900 dark:text-white text-sm">
+              Completed
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ HERO IMAGE ═══ -->
+    <section class="pb-16">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="reveal pf rounded-2xl w-full aspect-video">
+          <img src="assets/kdractitans/main.png"
+            alt="KDR Titans Mobile App Overview" loading="eager" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <section class="py-16">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Overview
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              The Challenge
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-6">
+              KDR Adventure Camp (KDRAC) hosts the KDR Titans obstacle course quarterly, but the registration process heavily relied on Google Forms. This text-heavy, manual process was tedious for users, lacking the visual engagement and clear structuring that an event of this magnitude deserves.
+            </p>
+            <p class="reveal d3 text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              The objective was to completely overhaul the registration experience by conceptualizing a high-fidelity mobile application prototype that prioritized an intuitive User Interface (UI) and a frictionless User Experience (UX), ultimately boosting registration conversions.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SOLUTION ═══ -->
+    <section class="py-16 bg-zinc-50 dark:bg-zinc-900/40">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Approach
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              The Solution
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-8">
+              The prototype was created over a span of a week, featuring 12 distinct panels designed for the iPhone 14/15 Pro Max form factor. It broke down the complex Google form into easily digestible steps.
+            </p>
+
+            <!-- Feature cards -->
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div
+                class="reveal d1 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Data Privacy Compliance
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Integrated a dedicated Agreement Page ensuring consent collection aligned with the Data Privacy Act of 2012 prior to registration.
+                </p>
+              </div>
+
+              <div
+                class="reveal d2 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Category Selection
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Visual selection interface allowing participants to intuitively choose between Open, Age Group, or Elite course categories.
+                </p>
+              </div>
+
+              <div
+                class="reveal d3 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Waiver of Liability
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  A mandatory waiver checkpoint ensuring participants are aware of the inherent hazards and assume personal responsibility.
+                </p>
+              </div>
+
+              <div
+                class="reveal d4 card-h bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-blue-50 dark:bg-zinc-700 rounded-lg mb-4">
+                  <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-sm text-zinc-900 dark:text-white mb-2">
+                  Seamless Payment Upload
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  Integrated payment confirmation flow allowing users to upload proof of payment for administrative verification.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TECH STACK ═══ -->
+    <section class="py-16">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Technology
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              Tech Stack
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <div class="reveal d2 flex flex-wrap gap-3">
+              <span
+                class="text-sm bg-blue-50 dark:bg-zinc-800 text-accent border border-blue-200 dark:border-zinc-700 px-4 py-2 rounded-full font-medium">Figma</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">UI/UX Design</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Prototyping</span>
+              <span
+                class="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full">Wireframing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ GALLERY / VISUALS ═══ -->
+    <section class="py-16 bg-zinc-50 dark:bg-zinc-900/40">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+            Gallery
+          </p>
+          <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+            Preview
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="reveal d1 pf rounded-2xl aspect-[9/16] bg-zinc-200 dark:bg-zinc-800">
+            <img src="assets/kdractitans/1.png"
+              alt="Data Privacy Agreement Screen" loading="lazy" />
+          </div>
+          <div class="reveal d2 pf rounded-2xl aspect-[9/16] bg-zinc-200 dark:bg-zinc-800">
+            <img src="assets/kdractitans/2.png"
+              alt="Registration Form Screen" loading="lazy" />
+          </div>
+          <div class="reveal d3 pf rounded-2xl aspect-[9/16] bg-zinc-200 dark:bg-zinc-800">
+            <img src="assets/kdractitans/3.png"
+              alt="Category Selection Screen" loading="lazy" />
+          </div>
+          <div class="reveal d4 pf rounded-2xl aspect-[9/16] bg-zinc-200 dark:bg-zinc-800">
+            <img src="assets/kdractitans/4.png"
+              alt="Payment Upload Screen" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ OUTCOME ═══ -->
+    <section class="py-16">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12">
+          <!-- Left label -->
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-2">
+              Results
+            </p>
+            <h2 class="reveal d1 font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              The Outcome
+            </h2>
+          </div>
+          <!-- Right content -->
+          <div class="md:col-span-2">
+            <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-8">
+              The project yielded a high-fidelity prototype accompanied by comprehensive system diagrams (ERD, DFD, Use Case). By proposing this mobile-first approach, the registration flow was transformed from an administrative burden into a seamless user experience, preparing KDRAC for scalable future events.
+            </p>
+
+            <!-- Outcome highlights -->
+            <div class="reveal d3 grid grid-cols-3 gap-6">
+              <div class="text-center">
+                <p class="font-display font-bold text-3xl text-accent mb-1">12</p>
+                <p class="text-xs text-zinc-400">Distinct Panels</p>
+              </div>
+              <div class="text-center">
+                <p class="font-display font-bold text-3xl text-accent mb-1">3</p>
+                <p class="text-xs text-zinc-400">Categories Supported</p>
+              </div>
+              <div class="text-center">
+                <p class="font-display font-bold text-3xl text-accent mb-1">4</p>
+                <p class="text-xs text-zinc-400">System Diagrams mapped</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ VIEW PROTOTYPE CTA ═══ -->
+    <section class="py-16 bg-zinc-50 dark:bg-zinc-900/40">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">
+          Explore
+        </p>
+        <h2 class="reveal d1 font-display font-bold text-2xl md:text-3xl text-zinc-900 dark:text-white mb-4">
+          View the Prototype
+        </h2>
+        <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xl mx-auto mb-8">
+          Interested in exploring the full design? The complete high-fidelity prototype is available on Figma for an interactive walkthrough of all screens and user flows.
+        </p>
+        <a href="https://www.figma.com/design/BAuUr0bFWlk333vyQ5K50y/SADD?node-id=0-1&p=f" target="_blank" rel="noopener noreferrer"
+          class="reveal d3 shimmer inline-flex items-center gap-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium px-8 py-4 rounded-full hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors text-sm">
+          <svg class="w-5 h-5" viewBox="0 0 38 57" fill="currentColor" aria-hidden="true">
+            <path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/>
+            <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/>
+            <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/>
+            <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"/>
+            <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/>
+          </svg>
+          Open in Figma
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══ NEXT PROJECT ═══ -->
+    <section class="py-16 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="reveal flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <p class="text-xs text-zinc-400 uppercase tracking-widest mb-2">Next project</p>
+            <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white">
+              CRK Request Form System
+            </h3>
+          </div>
+          <a href="crk-case-study.html"
+            class="shimmer inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium px-7 py-3.5 rounded-full hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors text-sm">
+            View project
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-zinc-100 dark:border-zinc-900">
+    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-zinc-400">
+        © <span id="yr"></span> Christian Eliseo Navales Isip. All rights reserved.
+      </p>
+      <p class="text-xs text-zinc-500">
+        Built with
+        <a href="https://tailwindcss.com" rel="noopener noreferrer" target="_blank"
+          class="hover:text-accent transition-colors">Tailwind CSS</a>
+        &amp;
+        <a href="https://alpinejs.dev" rel="noopener noreferrer" target="_blank"
+          class="hover:text-accent transition-colors">Alpine.js</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function app() {
+      return {
+        dark: false,
+        sc: false,
+
+        init() {
+          // dark mode
+          this.dark =
+            localStorage.getItem("theme") === "dark" ||
+            (!localStorage.getItem("theme") &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          this.$watch("dark", (v) =>
+            localStorage.setItem("theme", v ? "dark" : "light"),
+          );
+
+          // scroll
+          window.addEventListener(
+            "scroll",
+            () => {
+              this.sc = window.scrollY > 20;
+            },
+            { passive: true },
+          );
+
+          // reveal
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  e.target.classList.add("in");
+                  io.unobserve(e.target);
+                }
+              });
+            },
+            { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
+          );
+          document
+            .querySelectorAll(".reveal")
+            .forEach((el) => io.observe(el));
+
+          // year
+          document.getElementById("yr").textContent =
+            new Date().getFullYear();
+        },
+      };
+    }
+  </script>
+</body>
+
+</html>
